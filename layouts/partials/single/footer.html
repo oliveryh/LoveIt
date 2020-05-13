@@ -47,11 +47,10 @@
     <div class="post-info-more">
         <section class="post-tags">
             {{- with .Params.tags -}}
-                <i class="fas fa-tags fa-fw"></i>&nbsp;
                 {{- range $index, $value := . -}}
-                    {{- if gt $index 0 }},&nbsp;{{ end -}}
+                    {{- if gt $index 0 }}&nbsp;&nbsp;{{ end -}}
                     {{- $tag := $value | anchorize | printf "/tags/%s" | $.Site.GetPage -}}
-                    <a href="{{ $tag.RelPermalink }}">{{ $tag.Title }}</a>
+                    <a href="{{ $tag.RelPermalink }}"><i class="fas fa-tag fa-fw"></i> {{ $tag.Title }}</a>
                 {{- end -}}
             {{- end -}}
         </section>

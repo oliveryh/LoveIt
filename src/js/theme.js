@@ -322,6 +322,24 @@ class Theme {
         if (this.config.lightGallery) lightGallery(document.getElementById('content'), this.config.lightGallery);
     }
 
+    initCode() {
+        this.util.forEach(document.querySelectorAll('pre>code:not([class])'), $preCode => {
+            const $preCode = $preCode.parentElement;
+	    const $code = document.createElement('div');
+            $code.className = $preCode.className;
+            const $table = document.createElement('table');
+            $code.appendChild($table);
+            const $tbody = document.createElement('tbody');
+            $table.appendChild($tbody);
+            const $tr = document.createElement('tr');
+            $tbody.appendChild($tr);
+            const $td = document.createElement('td');
+            $tr.appendChild($td);
+            $preCode.parentElement.replaceChild($code, $preCode);
+            $td.appendChild($preCode);
+        });
+    }
+	
     initHighlight() {
         this.util.forEach(document.querySelectorAll('.highlight > pre.chroma'), $preChroma => {
             const $chroma = document.createElement('div');
@@ -361,7 +379,7 @@ class Theme {
                 $copy.insertAdjacentHTML('afterbegin', '<i class="far fa-copy fa-fw"></i>');
                 $copy.classList.add('copy');
                 const code = $code.innerText;
-                if (this.config.code.maxShownLines < 0 || code.split('\n').length < this.config.code.maxShownLines + 2) $chroma.classList.add('open');
+		if (this.config.code.maxShownLines < 0 || code.split('\n').length < this.config.code.maxShownLines + 2) $chroma.classList.add('open');
                 if (this.config.code.copyTitle) {
                     $copy.setAttribute('data-clipboard-text', code);
                     $copy.title = this.config.code.copyTitle;
@@ -562,30 +580,21 @@ class Theme {
             const speed = typeitConfig.speed ? typeitConfig.speed : 100;
             const cursorSpeed = typeitConfig.cursorSpeed ? typeitConfig.cursorSpeed : 1000;
             const cursorChar = typeitConfig.cursorChar ? typeitConfig.cursorChar : '|';
-            Object.values(typeitConfig.data).forEach(group => {
-                const typeone = (i) => {
-                    const id = group[i];
-                    const instance = new TypeIt(`#${id}`, {
-                        strings: this.data[id],
-                        speed: speed,
-                        lifeLike: true,
-                        cursorSpeed: cursorSpeed,
-                        cursorChar: cursorChar,
-                        waitUntilVisible: true,
-                        afterComplete: () => {
-                            if (i === group.length - 1) {
-                                if (typeitConfig.duration >= 0) window.setTimeout(() => {
-                                    instance.destroy();
-                                }, typeitConfig.duration);
-                                return;
-                            }
-                            instance.destroy();
-                            typeone(i + 1);
-                        },
-                    }).go();
-                };
-                typeone(0);
-            });
+	    new TypeIt(`#${id}`, {
+                speed: speed,
+		lifeLike: true,
+		cursorSpeed: cursorSpeed,
+		cursorChar: cursorChar,
+		waitUntilVisible: true,
+	    })
+		.type("Writing about Software Engineering")
+		.pause(100)
+		.delete(20)
+		.type("Minimalism")
+		.pause(100)
+		.delete(10)
+		.type("whatever else that comes to mind")
+		.go();
         }
     }
 
@@ -695,6 +704,7 @@ class Theme {
         this.initSearch();
         this.initDetails();
         this.initLightGallery();
+        this.initCode();
         this.initHighlight();
         this.initTable();
         this.initHeaderLink();
